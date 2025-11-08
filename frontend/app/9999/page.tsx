@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { Users, Mail, Phone, Building2, RefreshCw, Search } from "lucide-react"
+import { Users, Mail, Phone, Building2, RefreshCw, Search, CheckCircle, XCircle } from "lucide-react"
 
 interface TeamWithMembers extends TeamRegistration {
   team_members: TeamMember[]
@@ -27,10 +27,7 @@ export default function AdminPage() {
     try {
       const { data: teamsData, error: teamsError } = await supabase
         .from("teams")
-        .select(`
-          *,
-          team_members (*)
-        `)
+        .select("*")
         .order("created_at", { ascending: false })
 
       if (teamsError) {
@@ -74,6 +71,36 @@ export default function AdminPage() {
       )
 
       toast.success(`Marked as ${!currentStatus ? "Present" : "Absent"}`)
+    } catch (error) {
+      console.error("Unexpected error:", error)
+      toast.error("An unexpected error occurred")
+    } finally {
+      setUpdating(null)
+    }
+  }
+
+  const updatePaymentStatus = async (teamId: string, status: 'verified' | 'rejected') => {
+    setUpdating(teamId)
+    try {
+      const { error } = await supabase
+        .from("teams")
+        .update({ payment_status: status })
+        .eq("id", teamId)
+
+      if (error) {
+        console.error("Error updating payment status:", error)
+        toast.error("Failed to update payment status")
+        return
+      }
+
+      // Update local state
+      setTeams((prev) =>
+        prev.map((team) =>
+          team.id === teamId ? { ...team, payment_status: status } : team
+        )
+      )
+
+      toast.success(`Payment ${status === 'verified' ? 'Verified' : 'Rejected'}!`)
     } catch (error) {
       console.error("Unexpected error:", error)
       toast.error("An unexpected error occurred")
@@ -235,7 +262,7 @@ export default function AdminPage() {
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                           <Building2 className="w-4 h-4" />
-                          {team.institution}
+                          {team.college_name}
                         </div>
                         <div className="flex items-center gap-2">
                           <Users className="w-4 h-4" />
@@ -291,6 +318,10 @@ export default function AdminPage() {
                           {team.leader_phone}
                         </a>
                       </div>
+                      <div>
+                        <p className="text-muted-foreground">Roll No</p>
+                        <p className="text-foreground font-medium">{team.leader_roll_no}</p>
+                      </div>
                     </div>
                   </div>
 
@@ -301,7 +332,7 @@ export default function AdminPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {team.team_members.map((member, idx) => (
                           <div
-                            key={member.id}
+                            key={idx}
                             className="p-3 bg-secondary/10 rounded-lg border border-border"
                           >
                             <p className="text-xs text-muted-foreground mb-1">
@@ -312,6 +343,9 @@ export default function AdminPage() {
                               <Mail className="w-3 h-3" />
                               {member.email}
                             </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Roll: {member.roll_no}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -319,28 +353,70 @@ export default function AdminPage() {
                   )}
 
                   {/* Payment Details */}
-                  {team.payment_id && (
-                    <div className="mb-4 p-4 bg-green-500/10 rounded-lg border border-green-500/30">
-                      <p className="text-sm font-semibold text-green-500 mb-2">Payment Details</p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                        <div>
-                          <p className="text-muted-foreground">Payment ID</p>
-                          <p className="text-foreground font-mono text-xs break-all">{team.payment_id}</p>
+                  {team.upi_transaction_id && (
+                    <div className={`mb-4 p-4 rounded-lg border ${
+                      team.payment_status === 'verified' 
+                        ? 'bg-green-500/10 border-green-500/30' 
+                        : team.payment_status === 'rejected' 
+                        ? 'bg-red-500/10 border-red-500/30' 
+                        : 'bg-yellow-500/10 border-yellow-500/30'
+                    }`}>
+                      <p className={`text-sm font-semibold mb-2 ${
+                        team.payment_status === 'verified' 
+                          ? 'text-green-500' 
+                          : team.payment_status === 'rejected' 
+                          ? 'text-red-500' 
+                          : 'text-yellow-500'
+                      }`}>
+                        Payment Details
+                      </p>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <p className="text-muted-foreground">UPI Transaction ID</p>
+                            <p className="text-foreground font-mono text-xs break-all">{team.upi_transaction_id}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Status</p>
+                            <span className={`px-2 py-1 text-xs font-semibold rounded ${
+                              team.payment_status === 'verified' 
+                                ? 'bg-green-500/20 text-green-500' 
+                                : team.payment_status === 'rejected' 
+                                ? 'bg-red-500/20 text-red-500' 
+                                : 'bg-yellow-500/20 text-yellow-500'
+                            }`}>
+                              {team.payment_status?.toUpperCase() || 'PENDING'}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Amount</p>
+                            <p className="text-accent font-bold">₹{team.total_fee}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-muted-foreground">Order ID</p>
-                          <p className="text-foreground font-mono text-xs break-all">{team.order_id}</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Status</p>
-                          <span className="px-2 py-1 bg-green-500/20 text-green-500 text-xs font-semibold rounded">
-                            {team.payment_status?.toUpperCase() || 'COMPLETED'}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Amount Paid</p>
-                          <p className="text-green-500 font-bold">₹{team.total_fee}</p>
-                        </div>
+
+                        {/* Payment Action Buttons */}
+                        {team.payment_status === 'pending' && (
+                          <div className="flex gap-2 pt-2">
+                            <Button
+                              onClick={() => updatePaymentStatus(team.id!, 'verified')}
+                              disabled={updating === team.id}
+                              className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                              size="sm"
+                            >
+                              <CheckCircle className="w-4 h-4 mr-2" />
+                              Verify Payment
+                            </Button>
+                            <Button
+                              onClick={() => updatePaymentStatus(team.id!, 'rejected')}
+                              disabled={updating === team.id}
+                              className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                              size="sm"
+                            >
+                              <XCircle className="w-4 h-4 mr-2" />
+                              Reject Payment
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

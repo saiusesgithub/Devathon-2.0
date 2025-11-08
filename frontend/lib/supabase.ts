@@ -9,23 +9,22 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 export interface TeamRegistration {
   id?: string
   team_name: string
-  institution: string
+  college_name: string
   leader_name: string
   leader_email: string
   leader_phone: string
+  leader_roll_no: string
   total_members: number
   total_fee: number
-  payment_id?: string
-  order_id?: string
-  payment_status?: string
+  upi_transaction_id?: string
+  payment_status?: 'pending' | 'verified' | 'rejected'
   is_present?: boolean
   created_at?: string
+  team_members?: TeamMember[]
 }
 
 export interface TeamMember {
-  id?: string
-  team_id: string
   name: string
   email: string
-  created_at?: string
+  roll_no: string
 }
