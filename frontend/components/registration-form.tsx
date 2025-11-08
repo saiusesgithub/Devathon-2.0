@@ -15,6 +15,8 @@ interface RegistrationFormProps {
 
 export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   const [teamName, setTeamName] = useState("")
+  const [teamNameError, setTeamNameError] = useState("")
+  const [isCheckingTeamName, setIsCheckingTeamName] = useState(false)
   const [collegeName, setCollegeName] = useState("")
   const [leaderName, setLeaderName] = useState("")
   const [leaderEmail, setLeaderEmail] = useState("")
@@ -24,6 +26,39 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   const [transactionId, setTransactionId] = useState("")
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const checkTeamNameExists = async (name: string) => {
+    if (!name.trim()) {
+      setTeamNameError("")
+      return
+    }
+
+    setIsCheckingTeamName(true)
+    try {
+      const { data, error } = await supabase
+        .from("teams")
+        .select("team_name")
+        .ilike("team_name", name.trim())
+        .limit(1)
+
+      if (error) {
+        console.error("Error checking team name:", error)
+        setTeamNameError("")
+        return
+      }
+
+      if (data && data.length > 0) {
+        setTeamNameError("This team name is already taken. Please choose a different name.")
+      } else {
+        setTeamNameError("")
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error)
+      setTeamNameError("")
+    } finally {
+      setIsCheckingTeamName(false)
+    }
+  }
 
   const addMember = () => {
     if (members.length < 3) {
@@ -74,6 +109,11 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       return
     }
 
+    if (teamNameError) {
+      toast.error("Please fix the team name error before proceeding")
+      return
+    }
+
     if (totalMembers < 2) {
       toast.error("Minimum 2 members required (including team leader)")
       return
@@ -105,6 +145,11 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    if (teamNameError) {
+      toast.error("Please fix the team name error before submitting")
+      return
+    }
+
     if (!transactionId.trim()) {
       toast.error("Please enter transaction ID after completing payment")
       return
@@ -134,7 +179,15 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
       if (teamError) {
         console.error("Team insert error:", teamError)
-        toast.error(`Registration failed: ${teamError.message}`)
+        
+        // Check for duplicate team name error
+        if (teamError.code === '23505' || teamError.message.includes('duplicate') || teamError.message.includes('unique')) {
+          toast.error("This team name is already registered. Please choose a different name.")
+          setTeamNameError("This team name is already taken. Please choose a different name.")
+        } else {
+          toast.error(`Registration failed: ${teamError.message}`)
+        }
+        
         setIsSubmitting(false)
         return
       }
@@ -170,14 +223,31 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
         <div>
           <Label htmlFor="teamName" className="text-foreground mb-2 block">Team Name *</Label>
-          <Input
-            id="teamName"
-            value={teamName}
-            onChange={(e) => setTeamName(e.target.value)}
-            placeholder="Enter your team name"
-            className="w-full bg-input border border-border"
-            required
-          />
+          <div className="relative">
+            <Input
+              id="teamName"
+              value={teamName}
+              onChange={(e) => {
+                setTeamName(e.target.value)
+                setTeamNameError("") // Clear error while typing
+              }}
+              onBlur={(e) => checkTeamNameExists(e.target.value)}
+              placeholder="Enter your team name"
+              className={`w-full bg-input border ${teamNameError ? 'border-red-500 focus:border-red-500' : 'border-border'}`}
+              required
+            />
+            {isCheckingTeamName && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-accent"></div>
+              </div>
+            )}
+          </div>
+          {teamNameError && (
+            <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+              <span>⚠️</span>
+              {teamNameError}
+            </p>
+          )}
         </div>
 
         <div>
