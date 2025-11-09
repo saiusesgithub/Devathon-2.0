@@ -1,10 +1,10 @@
 export const specialThanks = {
   id: 1,
-  name: 'Obulesh Sir',
-  role: 'IT HOD',
+  name: 'Dr. A. Obulesu',
+  role: 'IT - HOD',
   domain: 'Department of Information Technology',
-  image: 'https://ui-avatars.com/api/?name=Obulesh+Sir&size=400&background=0ea5e9&color=fff&bold=true',
-  bio: 'We thank Obulesh Sir, IT HOD, for his guidance and support in making this event possible.',
+  image: '/converner/obulesu.jpeg',
+  bio: 'We extend our heartfelt gratitude to Dr. A. Obulesu, HOD of IT Department, for his invaluable guidance and unwavering support in making this event possible.',
   quote: 'Grateful for the mentorship and direction provided to the student community.',
 };
 

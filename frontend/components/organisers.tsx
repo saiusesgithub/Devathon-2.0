@@ -1,7 +1,7 @@
 "use client"
 
 import { useScrollAnimation } from '../components/hooks/useScrollAnimation';
-import { organizers } from '../components/data/eventData';
+import { organizers, specialThanks } from '../components/data/eventData';
 import { Linkedin, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -30,6 +30,73 @@ function Organizers() {
           <p className="text-lg text-foreground/70 max-w-3xl mx-auto">
             The passionate team behind DevUp Society, dedicated to building a thriving tech community
           </p>
+        </motion.div>
+
+        {/* Special Thanks Section - Convener */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-20"
+        >
+          <div className="text-center mb-8">
+            <h3 className="text-3xl md:text-4xl font-bold mb-2">
+              <span className="text-gradient bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">Special Thanks</span>
+            </h3>
+            <p className="text-foreground/60 text-sm">To our Convener</p>
+          </div>
+
+          <div className="flex justify-center">
+            <motion.div
+              whileHover={{ scale: 1.02, y: -5 }}
+              className="relative group max-w-md w-full"
+            >
+              {/* Glow effect on hover */}
+              <div className="absolute inset-0 bg-yellow-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              {/* Card */}
+              <div className="relative glass-effect-dark rounded-2xl overflow-hidden border border-yellow-500/30 group-hover:border-yellow-500/60 transition-all duration-300">
+                {/* Convener Badge */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
+                  <span className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full text-xs font-bold text-background shadow-lg">
+                    🙏 CONVENER
+                  </span>
+                </div>
+
+                {/* Image */}
+                <div className="relative h-96 overflow-hidden">
+                  <img
+                    src={specialThanks.image}
+                    alt={specialThanks.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+                  
+                  {/* Shine effect on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                </div>
+
+                {/* Name & role below image */}
+                <div className="p-6 text-center">
+                  <h3 className="text-2xl font-bold text-foreground mb-2 group-hover:text-yellow-400 transition-colors duration-300">
+                    {specialThanks.name}
+                  </h3>
+                  <p className="text-yellow-400 text-base font-semibold mb-2">{specialThanks.role}</p>
+                  <p className="text-foreground/60 text-sm mb-4">{specialThanks.domain}</p>
+                  <p className="text-foreground/70 text-sm italic leading-relaxed">
+                    "{specialThanks.bio}"
+                  </p>
+                </div>
+
+                {/* Decorative corner accents */}
+                <div className="absolute top-4 right-4 w-2 h-2 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-4 right-4 w-2 h-2 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute top-4 left-4 w-2 h-2 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-4 left-4 w-2 h-2 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            </motion.div>
+          </div>
         </motion.div>
 
         {/* Lead Organizer - Centered */}
