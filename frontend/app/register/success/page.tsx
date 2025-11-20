@@ -74,19 +74,6 @@ export default function SuccessPage() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl w-full"
           >
-            {/* Success Icon */}
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="flex justify-center mb-8"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-green-500/20 rounded-full blur-3xl animate-pulse" />
-                <CheckCircle className="w-24 h-24 text-green-500 relative z-10" strokeWidth={1.5} />
-              </div>
-            </motion.div>
-
             {/* Main Card */}
             <div className="glass-effect-dark rounded-3xl p-8 md:p-12 border border-accent/30 glow-neon-lg">
               <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">
@@ -170,6 +157,24 @@ export default function SuccessPage() {
                     <span>Check your email regularly for updates and event details</span>
                   </li>
                 </ul>
+              </div>
+
+              {/* WhatsApp Group CTA */}
+              <div className="glass-effect-dark rounded-2xl p-6 border border-green-400/40 mb-8 text-center space-y-4">
+                <p className="text-lg font-semibold text-green-400 flex items-center justify-center gap-2">
+                  ✅ Stay Updated Instantly
+                </p>
+                <p className="text-sm text-foreground/80">
+                  Join our official WhatsApp group for schedule updates, announcements, and quick support from the organizing team.
+                </p>
+                <a
+                  href="https://chat.whatsapp.com/CwpvTof1jcnA4xoxlJp9HF?mode=wwt"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-green-500 text-background font-semibold hover:bg-green-400 transition-colors"
+                >
+                  Join WhatsApp Group
+                </a>
               </div>
 
               {/* Action Button */}

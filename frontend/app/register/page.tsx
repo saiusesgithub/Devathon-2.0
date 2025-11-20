@@ -47,7 +47,7 @@ export default function RegisterPage() {
                   <p className="text-foreground/70 text-sm mt-1">Participants</p>
                 </div>
                 <div className="glass-effect rounded-lg p-4 text-center">
-                  <div className="text-3xl font-bold text-accent">₹10K</div>
+                  <div className="text-3xl font-bold text-accent">₹35K</div>
                   <p className="text-foreground/70 text-sm mt-1">In Prizes</p>
                 </div>
                 <div className="glass-effect rounded-lg p-4 text-center">

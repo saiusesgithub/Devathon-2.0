@@ -13,6 +13,13 @@ interface RegistrationFormProps {
   onSuccess?: () => void
 }
 
+type TeamMemberInput = {
+  name: string
+  email: string
+  phone: string
+  college: string
+}
+
 export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   const [teamName, setTeamName] = useState("")
   const [teamNameError, setTeamNameError] = useState("")
@@ -21,8 +28,8 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   const [leaderName, setLeaderName] = useState("")
   const [leaderEmail, setLeaderEmail] = useState("")
   const [leaderPhone, setLeaderPhone] = useState("")
-  const [leaderRollNo, setLeaderRollNo] = useState("")
-  const [members, setMembers] = useState<{ name: string; email: string; roll_no: string }[]>([])
+  const [leaderCollegeName, setLeaderCollegeName] = useState("")
+  const [members, setMembers] = useState<TeamMemberInput[]>([])
   const [transactionId, setTransactionId] = useState("")
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -62,7 +69,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
   const addMember = () => {
     if (members.length < 3) {
-      setMembers([...members, { name: "", email: "", roll_no: "" }])
+      setMembers([...members, { name: "", email: "", phone: "", college: "" }])
     } else {
       toast.error("Maximum 4 members per team (including leader)")
     }
@@ -72,7 +79,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
     setMembers(members.filter((_, i) => i !== index))
   }
 
-  const updateMember = (index: number, field: "name" | "email" | "roll_no", value: string) => {
+  const updateMember = (index: number, field: keyof TeamMemberInput, value: string) => {
     const updated = [...members]
     updated[index][field] = value
     setMembers(updated)
@@ -80,7 +87,8 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
   const totalMembers = members.length + 1 // +1 for leader
   const totalFee = totalMembers * 75 // ₹75 per person
-  const upiId = "7569799199@axl"
+  const primaryUpiId = "aliffaizan1212@oksbi"
+  const backupUpiId = "7569799199@axl"
   const upiName = "DevUp Society"
 
   useEffect(() => {
@@ -91,7 +99,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         const qrContainer = document.getElementById("qr-code-container")
         if (qrContainer) {
           qrContainer.innerHTML = ""
-          const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${totalFee}&cu=INR&tn=${encodeURIComponent("Devthon Registration")}`
+          const upiLink = `upi://pay?pa=${primaryUpiId}&pn=${encodeURIComponent(upiName)}&am=${totalFee}&cu=INR&tn=${encodeURIComponent("Devthon Registration")}`
           new QRCode(qrContainer, {
             text: upiLink,
             width: 256,
@@ -104,7 +112,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
   const handlePaymentClick = () => {
     // Validate form before showing payment
-    if (!teamName || !collegeName || !leaderName || !leaderEmail || !leaderPhone || !leaderRollNo) {
+    if (!teamName || !collegeName || !leaderName || !leaderEmail || !leaderPhone || !leaderCollegeName) {
       toast.error("Please fill all required fields")
       return
     }
@@ -120,15 +128,15 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
     }
 
     for (let member of members) {
-      if (!member.name || !member.email || !member.roll_no) {
-        toast.error("Please fill all member details including roll numbers")
+      if (!member.name || !member.email || !member.phone || !member.college) {
+        toast.error("Please fill all member details including phone numbers and college names")
         return
       }
     }
 
     // Check if mobile device
     const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-    const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${totalFee}&cu=INR&tn=${encodeURIComponent("Devthon Registration")}`
+    const upiLink = `upi://pay?pa=${primaryUpiId}&pn=${encodeURIComponent(upiName)}&am=${totalFee}&cu=INR&tn=${encodeURIComponent("Devthon Registration")}`
     
     if (isMobile) {
       // Open UPI app directly on mobile
@@ -167,7 +175,7 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
           leader_name: leaderName,
           leader_email: leaderEmail,
           leader_phone: leaderPhone,
-          leader_roll_no: leaderRollNo,
+          leader_roll_no: leaderCollegeName,
           team_members: members, // Store as JSON array
           total_members: totalMembers,
           total_fee: totalFee,
@@ -179,15 +187,25 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
       if (teamError) {
         console.error("Team insert error:", teamError)
-        
-        // Check for duplicate team name error
-        if (teamError.code === '23505' || teamError.message.includes('duplicate') || teamError.message.includes('unique')) {
-          toast.error("This team name is already registered. Please choose a different name.")
-          setTeamNameError("This team name is already taken. Please choose a different name.")
+
+        const errorMessage =
+          (typeof teamError.message === 'string' && teamError.message.trim().length > 0)
+            ? teamError.message
+            : 'Unexpected registration error. Please try again.'
+
+        const isDuplicateTeam =
+          teamError.code === '23505' ||
+          (typeof teamError.message === 'string' &&
+            (teamError.message.toLowerCase().includes('duplicate') ||
+              teamError.message.toLowerCase().includes('unique')))
+
+        if (isDuplicateTeam) {
+          toast.error('This team name is already registered. Please choose a different name.')
+          setTeamNameError('This team name is already taken. Please choose a different name.')
         } else {
-          toast.error(`Registration failed: ${teamError.message}`)
+          toast.error(`Registration failed: ${errorMessage}`)
         }
-        
+
         setIsSubmitting(false)
         return
       }
@@ -280,12 +298,12 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         </div>
 
         <div>
-          <Label htmlFor="leaderRollNo" className="text-foreground mb-2 block">Roll Number *</Label>
+          <Label htmlFor="leaderCollege" className="text-foreground mb-2 block">College Name *</Label>
           <Input
-            id="leaderRollNo"
-            value={leaderRollNo}
-            onChange={(e) => setLeaderRollNo(e.target.value)}
-            placeholder="e.g., 21R11A0501"
+            id="leaderCollege"
+            value={leaderCollegeName}
+            onChange={(e) => setLeaderCollegeName(e.target.value)}
+            placeholder="Enter your college name"
             className="w-full bg-input border border-border"
             required
           />
@@ -361,13 +379,24 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
                   required
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label className="text-foreground mb-2 block">Roll Number *</Label>
+                  <Label className="text-foreground mb-2 block">Phone Number *</Label>
                   <Input
-                    value={member.roll_no}
-                    onChange={(e) => updateMember(index, "roll_no", e.target.value)}
-                    placeholder="e.g., 21R11A0502"
+                    type="tel"
+                    value={member.phone}
+                    onChange={(e) => updateMember(index, "phone", e.target.value)}
+                    placeholder="+91 XXXXXXXXXX"
+                    className="w-full bg-input border border-border"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label className="text-foreground mb-2 block">College Name *</Label>
+                  <Input
+                    value={member.college}
+                    onChange={(e) => updateMember(index, "college", e.target.value)}
+                    placeholder="Enter college name"
                     className="w-full bg-input border border-border"
                     required
                   />
@@ -419,7 +448,13 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         </h3>
         <ol className="list-decimal list-inside space-y-2 text-foreground/80 text-sm">
           <li>Click "Pay via UPI" button below</li>
-          <li>Complete payment of ₹{totalFee} to UPI ID: <span className="text-accent font-mono">{upiId}</span></li>
+          <li>
+            Complete payment of ₹{totalFee} to Primary UPI ID:
+            <span className="text-accent font-mono block mt-1">{primaryUpiId}</span>
+            <span className="text-xs text-foreground/60 block mt-1">
+              Backup UPI ID (only if primary fails): <span className="text-accent font-mono">{backupUpiId}</span>
+            </span>
+          </li>
           <li className="text-accent font-semibold">Take a screenshot of the payment confirmation</li>
           <li>Keep the screenshot safe for verification</li>
           <li>Enter your Transaction ID below</li>
@@ -512,8 +547,15 @@ export default function RegistrationForm({ onSuccess }: RegistrationFormProps) {
 
               <div className="space-y-2">
                 <p className="text-sm text-foreground/60">Or pay manually to:</p>
-                <div className="bg-background/50 border border-accent/30 rounded p-3">
-                  <p className="text-accent font-mono font-bold">{upiId}</p>
+                <div className="bg-background/50 border border-accent/30 rounded p-3 space-y-2">
+                  <div>
+                    <p className="text-xs text-foreground/60">Primary UPI ID</p>
+                    <p className="text-accent font-mono font-bold">{primaryUpiId}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-foreground/60">Backup UPI ID</p>
+                    <p className="text-accent font-mono font-bold">{backupUpiId}</p>
+                  </div>
                   <p className="text-xs text-foreground/60">DevUp Society</p>
                 </div>
               </div>

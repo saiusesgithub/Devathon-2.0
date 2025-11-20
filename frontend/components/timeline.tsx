@@ -2,10 +2,10 @@
 
 export default function Timeline() {
   const events = [
-    { title: "Registration Open", date: "Nov 07", description: "Register your team" },
-    { title: "P.S Release", date: "Nov 11", description: "Select Problem Track" },
-    { title: "Devthon Day", date: "Nov 14-15", description: "College Hours" },
-    { title: "Results & Prizes", date: "Nov 15", description: "Winners announced" },
+    { title: "Registration Open", date: "Nov 20", description: "Register your team" },
+    { title: "P.S Release", date: "Nov 14", description: "Select Problem Track" },
+    { title: "Devthon Day", date: "Nov 28-29", description: "College Hours" },
+    { title: "Results & Prizes", date: "Nov 29", description: "Prize distribution & celebrations" },
   ]
 
   return (

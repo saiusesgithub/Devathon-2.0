@@ -49,12 +49,14 @@ describe('TypeScript Interfaces', () => {
     const mockMember = {
       name: 'Jane Doe',
       email: 'jane@example.com',
-      roll_no: 'CS002',
+      phone: '+91-9999999999',
+      college: 'Sample College',
     }
 
     expect(mockMember).toHaveProperty('name')
     expect(mockMember).toHaveProperty('email')
-    expect(mockMember).toHaveProperty('roll_no')
+    expect(mockMember).toHaveProperty('phone')
+    expect(mockMember).toHaveProperty('college')
   })
 
   it('should validate payment status enum values', () => {
@@ -76,8 +78,8 @@ describe('TypeScript Interfaces', () => {
       total_members: 3,
       total_fee: 225,
       team_members: [
-        { name: 'Member 1', email: 'member1@example.com', roll_no: 'CS002' },
-        { name: 'Member 2', email: 'member2@example.com', roll_no: 'CS003' },
+        { name: 'Member 1', email: 'member1@example.com', phone: '+91-1111111111', college: 'Sample College' },
+        { name: 'Member 2', email: 'member2@example.com', phone: '+91-2222222222', college: 'Sample College' },
       ],
     }
 

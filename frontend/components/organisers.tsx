@@ -65,7 +65,7 @@ function Organizers() {
                 </div>
 
                 {/* Image */}
-                <div className="relative h-96 overflow-hidden">
+                <div className="relative h-72 md:h-96 overflow-hidden">
                   <img
                     src={specialThanks.image}
                     alt={specialThanks.name}
@@ -122,7 +122,7 @@ function Organizers() {
               </div>
 
               {/* Image */}
-              <div className="relative h-96 overflow-hidden">
+              <div className="relative h-72 md:h-96 overflow-hidden">
                 <img
                   src={organizers[0].image}
                   alt={organizers[0].name}
@@ -176,7 +176,7 @@ function Organizers() {
               {/* Card */}
               <div className="relative glass-effect-dark rounded-2xl overflow-hidden border border-border group-hover:border-accent/50 transition-all duration-300 h-full">
                 {/* Image */}
-                <div className="relative h-80 overflow-hidden">
+                <div className="relative h-64 md:h-80 overflow-hidden">
                   <img
                     src={organizer.image}
                     alt={organizer.name}

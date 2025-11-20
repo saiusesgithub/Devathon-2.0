@@ -54,7 +54,7 @@ describe('Registration Flow Integration Tests', () => {
     fireEvent.change(screen.getByLabelText(/full name/i), { target: { value: 'John Doe' } })
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'john@test.com' } })
     fireEvent.change(screen.getByLabelText(/phone/i), { target: { value: '9876543210' } })
-    fireEvent.change(screen.getByLabelText(/roll number/i), { target: { value: 'CS001' } })
+    fireEvent.change(screen.getByLabelText(/college name/i), { target: { value: 'Leader College' } })
     
     // Step 3: Verify fee (should be ₹75 for 1 person) - check button specifically
     const payButton = screen.getByRole('button', { name: /pay ₹75 via upi/i })
@@ -73,7 +73,7 @@ describe('Registration Flow Integration Tests', () => {
     fireEvent.change(screen.getByLabelText(/full name/i), { target: { value: 'Alice' } })
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'alice@test.com' } })
     fireEvent.change(screen.getByLabelText(/phone/i), { target: { value: '9876543210' } })
-    fireEvent.change(screen.getByLabelText(/roll number/i), { target: { value: 'CS001' } })
+    fireEvent.change(screen.getByLabelText(/college name/i), { target: { value: 'Leader College' } })
     
     // Add 2 members
     const addButton = screen.getByRole('button', { name: /add member/i })
@@ -152,6 +152,7 @@ describe('Registration Flow Integration Tests', () => {
     render(<RegistrationForm />)
     
     // UPI details should be visible in payment instructions
+    expect(screen.getByText(/aliffaizan1212@oksbi/i)).toBeInTheDocument()
     expect(screen.getByText(/7569799199@axl/i)).toBeInTheDocument()
     expect(screen.getByText(/payment instructions/i)).toBeInTheDocument()
     

@@ -24,7 +24,7 @@ export default function FAQ() {
     },
     {
       question: "Are there any fees for participation?",
-      answer: "Yes , the registration fee is just ₹49 per participant - Limited slots available, Hurry before prices increase!",
+      answer: "Yes , the registration fee is just ₹75 per participant - Limited slots available, Hurry before prices increase!",
     },
     {
       question: "What are the judging criteria?",

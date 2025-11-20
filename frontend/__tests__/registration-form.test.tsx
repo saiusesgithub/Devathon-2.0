@@ -45,7 +45,7 @@ describe('RegistrationForm Component', () => {
     expect(screen.getByLabelText(/full name/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/phone/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/roll number/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/college name/i)).toBeInTheDocument()
   })
 
   it('should display fee calculation', () => {
@@ -156,6 +156,7 @@ describe('RegistrationForm Component', () => {
     render(<RegistrationForm />)
     
     // UPI ID should be visible in the payment instructions section
+    expect(screen.getByText(/aliffaizan1212@oksbi/i)).toBeInTheDocument()
     expect(screen.getByText(/7569799199@axl/i)).toBeInTheDocument()
   })
 

@@ -26,5 +26,6 @@ export interface TeamRegistration {
 export interface TeamMember {
   name: string
   email: string
-  roll_no: string
+  phone: string
+  college: string
 }

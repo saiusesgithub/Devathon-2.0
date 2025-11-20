@@ -27,7 +27,7 @@ export default function About() {
                 <div className="text-foreground/60">Teams</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-accent">₹25K+</div>
+                <div className="text-3xl font-bold text-accent">₹3w5K+</div>
                 <div className="text-foreground/60">Prize Pool</div>
               </div>
             </div>
